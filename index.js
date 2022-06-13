@@ -13,6 +13,9 @@ app.use(
     origin: process.env.CORS_ORIGIN,
   })
 );
+
+console.log(process.env.CORS_ORIGIN);
+
 app.use(express.json());
 
 const accountSid = process.env.ACCOUNT_SID;
