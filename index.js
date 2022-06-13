@@ -1,8 +1,14 @@
 const express = require("express");
 const app = express();
+const cors = require("cors");
 require("dotenv").config();
 const port = 8000;
 
+app.use(
+  cors({
+    origin: process.env.CORS_ORIGIN,
+  })
+);
 app.use(express.json());
 
 const accountSid = process.env.ACCOUNT_SID;
@@ -10,7 +16,7 @@ const authToken = process.env.AUTH_TOKEN;
 const client = require("twilio")(accountSid, authToken);
 
 app.get("/", (req, res) => {
-  res.send("Hello World!");
+  res.send("Server is running...");
 });
 
 app.post("/send-message", (req, res) => {
