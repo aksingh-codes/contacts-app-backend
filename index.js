@@ -83,29 +83,40 @@ app.post("/send-message", (req, res) => {
     .done();
 });
 
-app.get("/get-messages", (req, res) => {
-  client.messages
-    .list()
-    .then((messages) => {
-      console.log(messages);
-      res.status(200).json({
-        success: true,
-        messages: messages.map((message) => {
-          return {
-            to: message.to,
-            date: message.dateSent,
-            body: message.body,
-          };
-        }),
-      });
-    })
-    .catch((err) => {
-      console.error(err);
-      res.status(400).json({
-        success: false,
-        message: "Cannot get messages",
+app.get("/get-messages", async (req, res) => {
+  try {
+    const messagesResponse = await client.messages.list();
+    const contacts = await Contact.find();
+
+    const messages = messagesResponse.map((message) => {
+      return {
+        to: message.to,
+        date: message.dateSent,
+        body: message.body,
+      };
+    });
+
+    messages.forEach((message) => {
+      contacts.forEach((contact) => {
+        if (contact.phone.trim() === message.to.trim()) {
+          message.photo = contact.photo;
+          message.first_name = contact.first_name;
+          message.last_name = contact.last_name;
+        }
       });
     });
+
+    res.status(200).json({
+      success: true,
+      messages,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({
+      success: false,
+      message: "Cannot get messages",
+    });
+  }
 });
 
 // Contacts
