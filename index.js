@@ -25,7 +25,7 @@ const client = require("twilio")(accountSid, authToken);
 
 // Connect to DB
 mongoose
-  .connect("mongodb://localhost:27017/otpContactsDB")
+  .connect(process.env.DB_URL)
   .then(() => console.log("Successfully connected to mongoDB"))
   .catch((err) => console.error(err));
 
